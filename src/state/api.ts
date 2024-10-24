@@ -8,7 +8,7 @@ export interface Project {
 }
 export enum Status {
     ToDo = "To Do",
-    WorkInProgress = "Work in Progress",
+    WorkInProgress = "Work In Progress",
     UnderReview = "Under Review",
     Completed= "Completed"
 }
@@ -20,13 +20,13 @@ export enum Priority {
     Backlog = "Backlog"
 }
 export interface User {
-    id:number;
-    username:string;
-    email:string;
-    profilePictureUrl?:string;
-    cognitoId?:string;
-    teamId?:number
-}
+    userId?: number;
+    username: string;
+    email: string;
+    profilePictureUrl?: string;
+    cognitoId?: string;
+    teamId?: number;
+  }
 export interface Attachment{
     id:number;
     fileURL:string;
@@ -73,6 +73,14 @@ export const api = createApi({
         getTasks:build.query<Task[],{projectId:number}>({
             query:({projectId})=>`tasks?projectId=${projectId}`,
             providesTags:(result)=>result?result.map(({id})=>({type:"Tasks" as const, id})):[{type:"Tasks" as const}]
+        }),
+        createTask:build.mutation<Task,Partial<Task>>({
+            query:(task)=>({
+                url:"tasks",
+                method:"POST",
+                body:task
+            }),
+            invalidatesTags:["Tasks"]
         }),
         updateTaskStatus:build.mutation<Task,{taskId:number,status:string}>({
             query:({taskId,status})=>({
