@@ -88,9 +88,9 @@ export const api = createApi({
                 method:"PATCH",
                 body:{status}
             }),
-            invalidatesTags:(result,error,{taskId})=>[{"type":"Tasks",id:taskId}]
+            invalidatesTags:(result,error,{taskId})=>[{type:"Tasks",id:taskId}]
         })
     })
 })
 
-export const {useGetProjectsQuery,useCreateProjectMutation,useGetTasksQuery,useUpdateTaskStatusMutation} = api;
+export const {useGetProjectsQuery,useCreateProjectMutation,useGetTasksQuery,useUpdateTaskStatusMutation,useCreateTaskMutation} = api;
