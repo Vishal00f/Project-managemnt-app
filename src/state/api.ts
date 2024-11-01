@@ -53,6 +53,12 @@ export interface Task {
             comments?:Comment[];
             attachments?:Attachment[];
 }
+export interface Team {
+    teamId: number;    
+    teamName :string;          
+    productOwnerUserId?:number ;
+    projectManagerUserId?:number           
+}
 export interface SearchResults {
     tasks?:Task[];
     projects?:Project[];
@@ -61,7 +67,7 @@ export interface SearchResults {
 export const api = createApi({
     baseQuery:fetchBaseQuery({baseUrl:process.env.NEXT_PUBLIC_API_BASE_URL}),
     reducerPath:"api",
-    tagTypes:["Projects","Tasks","Users"],
+    tagTypes:["Projects","Tasks","Users","Teams"],
     endpoints:(build)=>({
         getProjects:build.query<Project[],void>({
              query:()=>"projects",
@@ -78,6 +84,10 @@ export const api = createApi({
         getTasks:build.query<Task[],{projectId:number}>({
             query:({projectId})=>`tasks?projectId=${projectId}`,
             providesTags:(result)=>result?result.map(({id})=>({type:"Tasks" as const, id})):[{type:"Tasks" as const}]
+        }),
+        getTaskByUser:build.query<Task[],number>({
+            query:(userId)=>`tasks/user/${userId}`,
+            providesTags:(result,error,userId)=>result? result.map(({id})=>({type:"Tasks",id})):[{type:"Tasks",id:userId}]
         }),
         createTask:build.mutation<Task,Partial<Task>>({
             query:(task)=>({
@@ -101,8 +111,12 @@ export const api = createApi({
         getUsers:build.query<User[],void>({
             query:()=>'users',
             providesTags:["Users"]
+        }),
+        getTeams:build.query<Team[],void>({
+            query:()=>"teams",
+            providesTags:["Teams"]
         })
     })
 })
 
-export const {useGetProjectsQuery,useCreateProjectMutation,useGetTasksQuery,useUpdateTaskStatusMutation,useCreateTaskMutation,useSearchQuery,useGetUsersQuery} = api;
+export const {useGetProjectsQuery,useCreateProjectMutation,useGetTasksQuery,useUpdateTaskStatusMutation,useCreateTaskMutation,useSearchQuery,useGetUsersQuery,useGetTeamsQuery,useGetTaskByUserQuery} = api;
